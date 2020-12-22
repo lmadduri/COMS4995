@@ -1,3 +1,10 @@
+import base64
+import datetime
+from urllib.parse import urlencode
+
+import requests
+
+
 class SpotifyAPI(object):
     access_token = None
     access_token_expires = datetime.datetime.now()
