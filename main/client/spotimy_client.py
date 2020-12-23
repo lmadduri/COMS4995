@@ -1,3 +1,7 @@
+'''
+Adapted from: https://github.com/codingforentrepreneurs/30-Days-of-Python/tree/master/tutorial-reference/Day%2019
+'''
+
 import base64
 import datetime
 from urllib.parse import urlencode
@@ -5,7 +9,7 @@ from urllib.parse import urlencode
 import requests
 
 
-class SpotifyAPI(object):
+class SpotifyMy(object):
     access_token = None
     access_token_expires = datetime.datetime.now()
     access_token_did_expire = True
