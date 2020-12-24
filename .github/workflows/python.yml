@@ -17,7 +17,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    # - name: Generate coverage report
+    #   run: |
+    #     pip install pytest
+    #     pip install pytest-cov
+    #     python -m pytest tests/ --cov=src/ --cov-report=xml
+    # - name: Upload coverage to Codecov
     - uses: codecov/codecov-action@v1
+      # with: 
+      #   file: ./coverage.xml
+      #   directory: ./coverage/reports/
+      #   name: spotimy
+      #   path_to_write_report: ./coverage/codecov_report.txt
+      #   verbose: true
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
