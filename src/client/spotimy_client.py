@@ -117,3 +117,6 @@ class SpotifyMy(object):
         query_params = urlencode({"q": query, "type": search_type.lower()})
         print(query_params)
         return self.base_search(query_params)
+
+    def general_method(self): 
+        return "hello"
