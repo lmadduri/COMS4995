@@ -1,3 +1,22 @@
+# has the functions that we want to implement with spotipy
+# can be eventually used as a helper class, but is also currently a server for testing purposes
+
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+client = "00592c0b16c943fdb2bb9de236338f4c" # enter your own here
+secret = "ef48fb836cd84ef493c80d14d9636bf5" # enter your own here
+redir = "http://127.0.0.1:9090" # enter your own here
+
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client,
+                                               client_secret=secret,
+                                               redirect_uri=redir,
+                                               scope="user-library-read"))
+
+results = sp.current_user_saved_tracks()
+for idx, item in enumerate(results['items']):
+    track = item['track']
+    print(idx, track['artists'][0]['name'], " – ", track['name'])
+
 # from flask import Flask, render_template, redirect, request, session, make_response,session,redirect
 # import spotipy
 # import spotipy.util as util
@@ -5,6 +24,7 @@
 # import json
 # app = Flask(__name__)
 #
+
 # API_BASE = 'https://accounts.spotify.com'
 #
 # # Make sure you add this to Redirect URIs in the setting of the application dashboard
@@ -90,85 +110,87 @@
 # if __name__ == "__main__":
 #     app.run(debug=True)
 
-import requests
-from flask import render_template, Flask
-
-GET_ARTIST_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}'
-SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search'
-RELATED_ARTISTS_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}/related-artists'
-TOP_TRACKS_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}/top-tracks'
-
-# https://developer.spotify.com/web-api/get-artist/
-def get_artist(artist_id):
-    url = GET_ARTIST_ENDPOINT.format(id=artist_id)
-    resp = requests.get(url)
-    return resp.json()
 
 
-# https://developer.spotify.com/web-api/search-item/
-def search_by_artist_name(name):
-    myparams = {'type': 'artist'}
-    myparams['q'] = name
-    resp = requests.get(SEARCH_ENDPOINT, params=myparams)
-    return resp.json()
-
-
-# https://developer.spotify.com/web-api/get-related-artists/
-def get_related_artists(artist_id):
-    url = RELATED_ARTISTS_ENDPOINT.format(id=artist_id)
-    resp = requests.get(url)
-    return resp.json()
-
-# https://developer.spotify.com/web-api/get-artists-top-tracks/
-def get_artist_top_tracks(artist_id, country='US'):
-    url = TOP_TRACKS_ENDPOINT.format(id=artist_id)
-    myparams = {'country': country}
-    resp = requests.get(url, params=myparams)
-    return resp.json()
-
-app = Flask(__name__)
-
-@app.route('/')
-def homepage():
-    html = render_template('homepage.html')
-    return html
-
-@app.route('/search/<name>')
-def search(name):
-    data = search_by_artist_name(name)
-    api_url = data['artists']['href']
-    items = data['artists']['items']
-    html = render_template('search.html',
-                            artist_name=name,
-                            results=items,
-                            api_url=api_url)
-    return html
-
-
-
-
-@app.route('/artist/<id>')
-def artist(id):
-    artist = get_artist(id)
-
-    if artist['images']:
-        image_url = artist['images'][0]['url']
-    else:
-        image_url = 'http://placecage.com/600/400'
-
-    tracksdata = get_artist_top_tracks(id)
-    tracks = tracksdata['tracks']
-
-    artistsdata = get_related_artists(id)
-    relartists = artistsdata['artists']
-    html = render_template('artist.html',
-                            artist=artist,
-                            related_artists=relartists,
-                            image_url=image_url,
-                            tracks=tracks)
-    return html
-
-
-
-if __name__ == '__main__':
-    app.run(use_reloader=True, debug=True)
+# import requests
+# from flask import render_template, Flask
+#
+# GET_ARTIST_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}'
+# SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search'
+# RELATED_ARTISTS_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}/related-artists'
+# TOP_TRACKS_ENDPOINT = 'https://api.spotify.com/v1/artists/{id}/top-tracks'
+#
+# # https://developer.spotify.com/web-api/get-artist/
+# def get_artist(artist_id):
+#     url = GET_ARTIST_ENDPOINT.format(id=artist_id)
+#     resp = requests.get(url)
+#     return resp.json()
+#
+#
+# # https://developer.spotify.com/web-api/search-item/
+# def search_by_artist_name(name):
+#     myparams = {'type': 'artist'}
+#     myparams['q'] = name
+#     resp = requests.get(SEARCH_ENDPOINT, params=myparams)
+#     return resp.json()
+#
+#
+# # https://developer.spotify.com/web-api/get-related-artists/
+# def get_related_artists(artist_id):
+#     url = RELATED_ARTISTS_ENDPOINT.format(id=artist_id)
+#     resp = requests.get(url)
+#     return resp.json()
+#
+# # https://developer.spotify.com/web-api/get-artists-top-tracks/
+# def get_artist_top_tracks(artist_id, country='US'):
+#     url = TOP_TRACKS_ENDPOINT.format(id=artist_id)
+#     myparams = {'country': country}
+#     resp = requests.get(url, params=myparams)
+#     return resp.json()
+#
+# app = Flask(__name__)
+#
+# @app.route('/')
+# def homepage():
+#     html = render_template('homepage.html')
+#     return html
+#
+# @app.route('/search/<name>')
+# def search(name):
+#     data = search_by_artist_name(name)
+#     api_url = data['artists']['href']
+#     items = data['artists']['items']
+#     html = render_template('search.html',
+#                             artist_name=name,
+#                             results=items,
+#                             api_url=api_url)
+#     return html
+#
+#
+#
+#
+# @app.route('/artist/<id>')
+# def artist(id):
+#     artist = get_artist(id)
+#
+#     if artist['images']:
+#         image_url = artist['images'][0]['url']
+#     else:
+#         image_url = 'http://placecage.com/600/400'
+#
+#     tracksdata = get_artist_top_tracks(id)
+#     tracks = tracksdata['tracks']
+#
+#     artistsdata = get_related_artists(id)
+#     relartists = artistsdata['artists']
+#     html = render_template('artist.html',
+#                             artist=artist,
+#                             related_artists=relartists,
+#                             image_url=image_url,
+#                             tracks=tracks)
+#     return html
+#
+#
+#
+# if __name__ == '__main__':
+#     app.run(use_reloader=True, debug=True)
