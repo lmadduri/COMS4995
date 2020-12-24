@@ -52,9 +52,21 @@ def show_recent_playlists():
     # see the names of your most recent playlists
     results = sp.user_playlists(username)
     playlist_ids = []
-    images_list = ["images/image1.jpg","images/image2.jpg","images/image3.jpg","images/image4.jpg","images/image5.jpg", "images/image6.jpg"]
+    neon = ["neon/image1.jpg",
+            "neon/image2.jpg",
+            "neon/image3.jpg",
+            "neon/image4.jpg",
+            "neon/image5.jpg",
+            "neon/image6.jpg"]
+    art = ["images/art/art1.jpg",
+            "images/art/art2.jpg",
+           "images/art/art3.jpg",
+           "images/art/art4.jpg",
+           "images/art/art5.jpg",
+           "images/art/art6.jpg"
+           ]
+    images_list = art
     random.shuffle(images_list)
-    print(images_list)
     for i, item in enumerate(results['items']):
         print("%d %s" % (i, item['name']))
         if(item['owner']['id'] == user_id):
@@ -71,7 +83,6 @@ def show_recent_playlists():
         # allow requests to take their time
         # don't want to deal with async calls in flask for right now: future issue TODO
         time.sleep(1)
-
 
 
 show_recent_playlists()
