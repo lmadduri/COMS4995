@@ -13,7 +13,7 @@ Run app.py
 
 import os
 from flask import Flask, session, request, redirect
-from session import session
+# from session import session
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import uuid
