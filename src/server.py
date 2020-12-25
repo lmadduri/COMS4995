@@ -3,20 +3,15 @@
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-# move to .env files eventually
-from PIL import Image
+import config
 import base64
 import time
 import random
 
-username = "77wayghwgawa808wqf2ozfqpx"
-client = "00592c0b16c943fdb2bb9de236338f4c" # enter your own here
-secret = "ef48fb836cd84ef493c80d14d9636bf5" # enter your own here
-redir = "http://127.0.0.1:9090" # enter your own here
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client,
-                                               client_secret=secret,
-                                               redirect_uri=redir,
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=config.client,
+                                               client_secret=config.secret,
+                                               redirect_uri=config.dir,
                                                scope='user-library-read \
                                                user-library-modify \
                                                user-read-recently-played \
@@ -48,36 +43,51 @@ def show_recent_artists():
             print(i, item["name"])
         print()
 
+# create a function that aestheticizes your playlist based on themes
+#Base64 encoded JPEG image data, maximum payload size is 256 KB
 def show_recent_playlists():
     # see the names of your most recent playlists
-    results = sp.user_playlists(username)
+    results = sp.user_playlists(config.username)
     playlist_ids = []
-    images_list = ["images/image1.jpg","images/image2.jpg","images/image3.jpg","images/image4.jpg","images/image5.jpg", "images/image6.jpg"]
-    random.shuffle(images_list)
-    print(images_list)
+
     for i, item in enumerate(results['items']):
         print("%d %s" % (i, item['name']))
         if(item['owner']['id'] == user_id):
             # add all the current playlists' ids to a list for processing
             playlist_ids.append(item['uri'][item['uri'].find("list:")+5:])
 
-    print(len(playlist_ids))
+    aesthetisize_playlist_covers()
+
+def aesthetisize_playlist_covers(playlist_ids):
+    # list comprehension importing images for aesthetic replacement
+    neon = ["images/{}/image{}.jpg".format("neon",str(i)) for i in range(1,9)]
+    pearls = ["images/{}/img{}.jpeg".format("pearls", str(i)) for i in range(1, 9)]
+    abstract = ["images/{}/img{}.jpg".format("abstract", str(i)) for i in range(1, 8)]
+    clouds = ["images/{}/img{}.jpeg".format("clouds", str(i)) for i in range(1, 7)]
+    art = ["images/{}/art{}.jpg".format("neon", str(i)) for i in range(1, 7)]
+
+    print("Welcome to SpotiMy")
+    print("Customize your playlist covers using this quick and easy tool")
+    print("The aesthetics you can choose are: neon, pearls, abstract, clouds, and art")
+    user_in = input("Which aesthetic would you like? ")
+    # takes the string input and converts it to the respective variable name
+    images_list = eval(user_in)
+    # shuffle images list so that the images aren't displayed in any particular order
+    random.shuffle(images_list)
 
     for i in range(len(playlist_ids)-1):
         with open(images_list[i], "rb") as image_file:
-            print("change")
+            if(not images_list[i] or images_list[i] == None):
+                break
+            print("Updating playlist # " + str(i + 1) + ". . .")
             sp.playlist_upload_cover_image(playlist_id=playlist_ids[i],
                                        image_b64=base64.b64encode(image_file.read()))
+
         # allow requests to take their time
         # don't want to deal with async calls in flask for right now: future issue TODO
         time.sleep(1)
 
-
-
 show_recent_playlists()
-# create a function that aestheticizes your playlist based on themes
-#Base64 encoded JPEG image data, maximum payload size is 256 KB
-
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
